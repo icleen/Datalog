@@ -51,6 +51,9 @@ public:
     vector< vector<string> > tuplesOut() {
         return tuples;
     }
+    vector<string> attributesOut() {
+        return attributes;
+    }
     
     vector< vector<string> > select(int attr, string value);
     vector< vector<string> > select(int attr, int attr2);

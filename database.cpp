@@ -54,8 +54,12 @@ relation* Database::copyRelation(relation* a) {
     
     relation* b = new relation(a->nameOut());
     vector< vector<string> > tempTuple = a->tuplesOut();
+    vector<string> attrs = a->attributesOut();
     for (int i = 0; i < tempTuple.size(); i++) {
         b->addTuple(tempTuple[i]);
+    }
+    for (int j = 0; j < attrs.size(); j++) {
+        b->addAttribute(attrs[j]);
     }
     
     return b;
