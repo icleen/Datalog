@@ -32,6 +32,7 @@ class Database {
 private:
 	class datalogClass* datalog;
     vector<class relation*> relations;
+    string renameOutput;
     
     void makeRelations();
     void makeTuples();
@@ -43,19 +44,29 @@ private:
     relation* selector(relation* r, int a, int b);
     relation* selector(relation* r, int a, string b);
     relation* projector(relation* r);
+    void renamer(relation* rel);
     vector<myNode*> projectList;
     
     int relationIndex(string name);
     relation* copyRelation(relation* a);
     int repeatVar(string var);
     
+    // Lab 4 functions:
+    void convertRules( vector<RuleClass*> rules );
+    relation* ruler( RuleClass* rule );
+    relation* ruler2( RuleClass* rule );
+
+    relation* naturalJoin( relation* a, relation* b );
+
 public:
     Database(datalogClass* data) : datalog(data) {
         makeRelations();
     };
     
     string interpretStart();
-    string renames(relation* rel);
+
+
+
 
 };
 

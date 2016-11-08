@@ -117,6 +117,9 @@ public:
     vector<class PredicateClass*> schemesOut() {
         return schemes;
     };
+    vector<class RuleClass*> rulesOut() {
+            return rules;
+        };
     vector<class PredicateClass*> queriesOut() {
         return queries;
     };

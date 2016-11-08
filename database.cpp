@@ -54,14 +54,10 @@ relation* Database::copyRelation(relation* a) {
     
     relation* b = new relation(a->nameOut());
     vector< vector<string> > tempTuple = a->tuplesOut();
-    vector<string> attrs = a->attributesOut();
     for (int i = 0; i < tempTuple.size(); i++) {
         b->addTuple(tempTuple[i]);
     }
-    for (int j = 0; j < attrs.size(); j++) {
-        b->addAttribute(attrs[j]);
-    }
-    
+    b->addAttributes( a->attributesOut() );
     return b;
 }
 
@@ -89,7 +85,6 @@ string Database::interpretStart() {
     for (int i = 0; i < queries.size(); i++) {
     	out << queries[i]->toString() << "?";
 //    	cout << "(" << i + 1 << ") Working...\n";
-    	projectList.clear();
     	int index = relationIndex( queries[i]->nameOut() );
     	if ( index < 0 ) {
     		out << " No";
@@ -100,7 +95,7 @@ string Database::interpretStart() {
         		out << " No";
         	}else {
         		out << " Yes("<< tempRel->size() << ")";
-        		out << renames(tempRel);
+        		out << renameOutput;
     //    		cout << "rename?\n";
         	}
     	}
@@ -111,16 +106,18 @@ string Database::interpretStart() {
 }
 
 // returns a string with the relation info in it
-string Database::renames(relation* rel) {
+void Database::renamer(relation* rel) {
 	if ( projectList.size() == 0) {
-		return "";
+		return;
 	}
 	stringstream out;
 	out <<"\n";
 	for (int i = 0; i < rel->size(); i++) {
 		out << "  ";
 		for ( int j = 0; j < projectList.size(); j++ ) {
-			out << projectList[j]->name << "=" << rel->tuple_at( i, j);
+			string s = projectList[j]->name;
+			rel->rename( i, s );
+			out << s << "=" << rel->tuple_at( i, j);
 			if ( j < projectList.size() - 1 ) {
 				out << ", ";
 			}
@@ -130,12 +127,13 @@ string Database::renames(relation* rel) {
 		}
 	}
 
-	return out.str();
+	renameOutput = out.str();
 }
 
 
 // return a new relation based on the given relation and the data in the given query
 relation* Database::queryFind(relation *relat, PredicateClass *query) {
+	projectList.clear();
     relation* tempRel = copyRelation(relat);
 //    cout << "Here?\n";
     vector<ParameterClass*> params = query->paramsOut();
@@ -160,7 +158,7 @@ relation* Database::queryFind(relation *relat, PredicateClass *query) {
         }
     }
     tempRel = projector(tempRel);
-    
+    renamer( tempRel );
     return tempRel;
 }
 
@@ -190,10 +188,38 @@ relation* Database::projector(relation* rel) {
 		indexi.push_back( projectList[i]->index );
 	}
 	tempRel->addTuples( rel->project( indexi ) );
+	tempRel->addAttributes( rel->attributesOut() );
 	return tempRel;
 }
 
 
+//
+//	Making New Relations from the Rules
+//
+
+void Database::convertRules( vector<RuleClass*> rules ) {
+
+//	while (  ) // while the relations.size() is not the same as last time we called this function
+
+	for (int i = 0; i < rules.size(); i++) {
+		ruler( rules[i] );
+	}
+
+}
+
+relation* Database::ruler( RuleClass* rule ) {
+
+	PredicateClass* head = rule->headOut();
+	vector< PredicateClass* > preds = rule->predicatesOut();
+
+	for (int i = 0; i < preds.size(); i++) {
+//			make a relation through queryFind() and renames
+
+
+	}
+
+	return new relation( "new rule" );
+}
 
 
 
